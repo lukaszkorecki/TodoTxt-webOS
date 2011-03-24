@@ -1,31 +1,28 @@
 function TasksAssistant() {
+  this.file_parser = new FileParser();
+  this.html_gen = new TaskHtmlGenerator();
 }
 
-TasksAssistant.prototype.processData = function() {
+TasksAssistant.prototype.getData = function() {
   var data = [
-      { content : '(A) +chore Pay water @important', 'time' : 'lol'},
-      { content : '(A) 2011-03-06 Pay in £22 for the +card @important', 'time' : 'lol'},
-      { content : '(E) @web Check the domain names, and think about paying for plugawy.me', 'time' : 'lol'},
-      { content : 'Write mor tests for +Omoide', 'time' : 'lol'},
-      { content : 'x (B) crete first app @webos', 'time' : 'lol'},
-      { content : '(A) +chore Pay water @important', 'time' : 'lol'},
-      { content : '(A) 2011-03-06 Pay in £22 for the +card @important', 'time' : 'lol'},
-      { content : '(E) @web Check the domain names, and think about paying for plugawy.me', 'time' : 'lol'},
-      { content : 'Write mor tests for +Omoide', 'time' : 'lol'},
-      { content : 'x (B) crete first app @webos', 'time' : 'lol'},
-      { content : '(A) +chore Pay water @important', 'time' : 'lol'},
-      { content : '(A) 2011-03-06 Pay in £22 for the +card @important', 'time' : 'lol'},
-      { content : '(E) @web Check the domain names, and think about paying for plugawy.me', 'time' : 'lol'},
-      { content : 'Write mor tests for +Omoide', 'time' : 'lol'},
-      { content : 'x (B) crete first app @webos', 'time' : 'lol'}
+       '(A) +chore Pay water @important',
+       '(A) 2011-03-06 Pay in £22 for the +card @important',
+       '(E) @web Check the domain names, and think about paying for plugawy.me',
+       'Write mor tests for +Omoide',
+       'x (B) crete first app @webos'
     ];
 
-    return data;
+  return data.map(function(element){
+    var obj = this.file_parser.parseLine(element);
+    obj.content = this.html_gen.getHtml(obj.content);
+    return obj;
+  }.bind(this));
+
 };
 
 TasksAssistant.prototype.setup = function() {
   this.data = { };
-  this.data['items'] = this.processData();
+  this.data['items'] = this.getData();
 
 		this.model = { disabled: false };
 
@@ -33,14 +30,11 @@ TasksAssistant.prototype.setup = function() {
     swipeToDelete: false,
     reorderable: false,
     disabledProperty: 'disabled',
-    itemTemplate: 'tasks/itemTemplate'
+    itemTemplate: 'tasks/itemTemplate',
+    addItemLabel : 'Add...'
   };
   this.controller.setupWidget('tasksList', attributes, this.data);
 
-};
-
-TasksAssistant.prototype.filterFunction = function(event) {
-  // lol
 };
 
 TasksAssistant.prototype.activate = function(event) {

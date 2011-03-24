@@ -1,1 +1,4 @@
-/* TODO: put your application-specific CSS here */
+.project { color : blue }
+.context { color : dark-orange }
+.priority { font-weight: bold }
+.date { font-size: 80%}
