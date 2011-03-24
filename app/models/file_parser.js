@@ -12,9 +12,9 @@ FileParser.prototype.load = function(fileContent) {
 
 FileParser.prototype.parseLine = function(line) {
 
-  var priority = line.match(this.priorityRegex)[0];
+  var priority = line.match(this.priorityRegex) === null ? '' : line.match(this.priorityRegex)[0];
   var isDone = !!(line.match(this.doneRegex));
-  var createdAt = line.match(this.dateRegex)[0];
+  var createdAt = line.match(this.dateRegex) === null ? false : line.match(this.dateRegex)[0];
 
   var content = line.replace(this.priorityRegex, '');
   content = content.replace(this.doneRegex,'');
@@ -24,6 +24,9 @@ FileParser.prototype.parseLine = function(line) {
 
   if(createdAt) ret['createdAt'] = createdAt;
   if(priority) ret['priority'] = priority[1];
-  console.dir(ret);
   return ret;
+};
+
+FileParser.prototype.parseFile = function() {
+  return this.content.map(this.parseLine);
 };

@@ -53,3 +53,10 @@ ParserTests.prototype.testLineParsingDone = function() {
   Mojo.requireEqual(line.done, this.FIXTURE_OBJECT[0].done,'Parses done task and gets the done status');
   return Mojo.Test.passed;
 };
+
+ParserTests.prototype.testLineParsingDoneDone = function() {
+  var fp = new FileParser();
+  var line = fp.parseLine(this.FIXTURE_ARRAY[2]);
+  Mojo.requireEqual(line.done, this.FIXTURE_OBJECT[2].done,'Parses done task and gets the done status');
+  return Mojo.Test.passed;
+};
