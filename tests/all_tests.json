@@ -3,5 +3,12 @@
     "title" : "File Parser Tests",
     "source" : "tests/file_parser_tests.js",
     "testFunction" : "ParserTests"
+  },
+
+  {
+    "title" : "Html Generator Tests",
+    "source" : "tests/html_generator_test.js",
+    "testFunction" : "GeneratorTests"
+
   }
 ]
