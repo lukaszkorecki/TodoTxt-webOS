@@ -1,7 +1,7 @@
 {
 	"id": "com.coffeesounds.todotxt",
 	"version": "0.0.1",
-	"vendor": "My Company",
+	"vendor": "Łukasz Korecki",
 	"type": "web",
 	"main": "index.html",
 	"title": "TodoTxt",
