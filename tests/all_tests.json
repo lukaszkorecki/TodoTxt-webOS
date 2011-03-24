@@ -1,0 +1,7 @@
+[
+  {
+    "title" : "File Parser Tests",
+    "source" : "tests/file_parser_tests.js",
+    "testFunction" : "ParserTests"
+  }
+]

@@ -1,0 +1,2 @@
+var FileParser = function() {
+};
