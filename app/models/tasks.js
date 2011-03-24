@@ -19,7 +19,10 @@ _proto.remove = function(key,  callbacks) {
   this.db.discard(key,  callbacks.onSuccess, callbacks.onFailure);
 };
 
-//
+// XXX key is transparent for the user!
 _proto.get = function(key,  callbacks) {
   this.db.get(key,  callbacks.onSuccess, callbacks.onFailure);
 };
+
+// TODO add getAll method
+
