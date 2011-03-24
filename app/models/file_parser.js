@@ -3,7 +3,7 @@ var FileParser = function(lineSeparator) {
 
   this.priorityRegex = /^\(\w\)/i;
   this.doneRegex = /^x\ /i;
-  this.dateRegex = /\d{4}-\d{2}-\d{2}/i;
+  this.dateRegex = /\d{4}-\d{2}-\d{2}/;
 };
 
 FileParser.prototype.load = function(fileContent) {
@@ -17,8 +17,8 @@ FileParser.prototype.parseLine = function(line) {
   var createdAt = line.match(this.dateRegex)[0];
 
   var content = line.replace(this.priorityRegex, '');
-  content.replace(this.doneRegex,'');
-  content.replace(this.dateRegex,'');
+  content = content.replace(this.doneRegex,'');
+  content = content.replace(this.dateRegex,'');
 
   var ret = { content : content.trim(), done : isDone };
 
