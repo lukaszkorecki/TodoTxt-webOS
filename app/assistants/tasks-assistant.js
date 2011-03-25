@@ -30,8 +30,8 @@ TasksAssistant.prototype.setup = function() {
     swipeToDelete: false,
     reorderable: false,
     disabledProperty: 'disabled',
-    itemTemplate: 'tasks/itemTemplate',
-    addItemLabel : 'Add...'
+    itemTemplate: 'tasks/itemTemplate' //,
+    // addItemLabel : 'Add...'
   };
   this.controller.setupWidget('tasksList', attributes, this.data);
 
