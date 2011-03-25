@@ -30,11 +30,18 @@ TasksAssistant.prototype.setup = function() {
     swipeToDelete: false,
     reorderable: false,
     disabledProperty: 'disabled',
-    itemTemplate: 'tasks/itemTemplate' //,
-    // addItemLabel : 'Add...'
+    itemTemplate: 'tasks/itemTemplate',
+    dividerFunction : this.dividerFunction
   };
   this.controller.setupWidget('tasksList', attributes, this.data);
 
+};
+
+TasksAssistant.prototype.dividerFunction =  function(el) {
+  var p = el.priority;
+  if(el.done === true) p = 'X';
+  if(p == undefined) p = '';
+  return p;
 };
 
 TasksAssistant.prototype.activate = function(event) {
