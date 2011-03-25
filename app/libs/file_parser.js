@@ -12,12 +12,13 @@ FileParser.prototype.load = function(fileContent) {
 
 FileParser.prototype.parseLine = function(line) {
 
-  var priority = line.match(this.priorityRegex) === null ? '' : line.match(this.priorityRegex)[0];
   var isDone = !!(line.match(this.doneRegex));
-  var createdAt = line.match(this.dateRegex) === null ? false : line.match(this.dateRegex)[0];
+  var content = line.replace(this.doneRegex,'');
 
-  var content = line.replace(this.priorityRegex, '');
-  content = content.replace(this.doneRegex,'');
+  var priority = line.match(this.priorityRegex) === null ? '' : line.match(this.priorityRegex)[0];
+  content = content.replace(this.priorityRegex, '');
+
+  var createdAt = line.match(this.dateRegex) === null ? false : line.match(this.dateRegex)[0];
   content = content.replace(this.dateRegex,'');
 
   var ret = { content : content.trim(), done : isDone };
