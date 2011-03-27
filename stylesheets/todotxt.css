@@ -7,3 +7,9 @@ div[data-done="true"] {
   text-decoration: line-through;
   color: gray;
 }
+
+.doc_add {
+  background-image: url(../images/doc_plus.png);
+  background-repeat: no-repeat;
+  background-position: 5px 4px;
+}

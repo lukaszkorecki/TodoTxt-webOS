@@ -7,6 +7,8 @@ function TasksAssistant() {
 
 TasksAssistant.prototype.setup = function() {
 
+  this.addMenu();
+
   var data = this.tasks.getAll();
 
   var attributes = {
@@ -24,6 +26,22 @@ TasksAssistant.prototype.dividerFunction =  function(el) {
   if(el.done === true) p = 'X';
   if(p == undefined) p = '';
   return p;
+};
+
+TasksAssistant.prototype.addMenu = function() {
+  this.controller.setupWidget(Mojo.Menu.viewMenu,
+      this.attributes = {
+        spacerHeight: 0,
+        menuClass: 'no-fade'
+      },
+      this.model = {
+        visible: true,
+        items: [
+          { label: "Your tasks"},
+          { icon: "doc_add", command: "add-task"}
+        ]
+      }
+    );
 };
 
 TasksAssistant.prototype.activate = function(event) {
