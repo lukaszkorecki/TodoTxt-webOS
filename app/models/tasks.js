@@ -12,11 +12,11 @@ var Tasks = function(name, callbacks) {
 };
 
 
-Tasks.prototype.getAll = function() {
+Tasks.prototype.getAll = function(newContent) {
   var file='',  _data=[];
 
   // TODO this will be loaded via db and or dropbox
-  file = "(A) +chore Pay water @important\n(A) 2011-03-06 Pay in £22 for the +card @important\n(E) @web Check the domain names, and think about paying for plugawy.me\nWrite mor tests for +Omoide\nx (B) crete first app @webos\n";
+  file = newContent || "(A) +chore Pay water @important\n(A) 2011-03-06 Pay in £22 for the +card @important\n(E) @web Check the domain names, and think about paying for plugawy.me\nWrite mor tests for +Omoide\nx (B) crete first app @webos\n";
 
   _data = this.file_parser.load(file).content;
 

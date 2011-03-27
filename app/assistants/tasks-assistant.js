@@ -10,7 +10,7 @@ TasksAssistant.prototype.setup = function() {
   this.addMenu();
   this.setupNewTaskForm();
 
-  var data = this.tasks.getAll();
+  this.data = this.tasks.getAll();
 
   var attributes = {
     swipeToDelete: false,
@@ -18,7 +18,7 @@ TasksAssistant.prototype.setup = function() {
     itemTemplate: 'tasks/itemTemplate',
     dividerFunction : this.dividerFunction
   };
-  this.controller.setupWidget('tasksList', attributes, data);
+  this.controller.setupWidget('tasksList', attributes, this.data);
 
 };
 
@@ -54,6 +54,9 @@ TasksAssistant.prototype.handleCommand = function(event) {
       case 'add-task':
         this.toggleNewTaskForm();
         break;
+      case 'refresh-tasks':
+        this.refreshTasks();
+        break;
       default:
         break;
     }
@@ -64,6 +67,14 @@ TasksAssistant.prototype.toggleNewTaskForm = function() {
   this.controller.get('drawerId').mojo.toggleState();
 };
 
+TasksAssistant.prototype.refreshTasks = function() {
+
+  Mojo.Log.info('refreshing tasks!');
+var file ="(A) +chore Pay +bills @important\n(A) 2011-03-06 Pay +creditcards @important\n(A) 2011-03-26 check whether i have to Pay in $$$ @bank\n(B) 2011-03-26 Do taxes @home\n(C) 2011-03-26 Write the test code @home\n(D) 2011-03-27 Finish +cooking the salad @home\nWrite mor tests for +Omoide";
+
+  this.data = this.tasks.getAll(file);
+  this.controller.get('tasksList').mojo.noticeUpdatedItems(0, this.data.items);
+};
 TasksAssistant.prototype.setupNewTaskForm = function() {
   // drawer
   this.controller.setupWidget("drawerId",
