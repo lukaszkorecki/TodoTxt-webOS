@@ -44,6 +44,18 @@ TasksAssistant.prototype.addMenu = function() {
     );
 };
 
+TasksAssistant.prototype.handleCommand = function(event) {
+  if (event.type === Mojo.Event.command) {
+    switch (event.command) {
+      case 'add-task':
+        Mojo.Log.info('ADDING NEW TASK!');
+        break;
+      default:
+        break;
+    }
+  }
+
+};
 TasksAssistant.prototype.activate = function(event) {
 	/* put in event handlers here that should only be in effect when this scene is active. For
 	   example, key handlers that are observing the document */
