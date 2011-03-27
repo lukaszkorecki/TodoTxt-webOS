@@ -1,6 +1,6 @@
 var TaskHtmlGenerator = function() {
-  this.contextRegex = /\+\w{2,}/gi;
-  this.projectRegex = /\@\w{2,}/gi;
+  this.contextRegex = /\@\w{2,}/gi;
+  this.projectRegex = /\+\w{2,}/gi;
 
   this.contextHtml = function(context) {
     return '<span class="context">'+context+'</span>';

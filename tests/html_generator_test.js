@@ -1,6 +1,6 @@
 var GeneratorTests = function () {
   this.FIXTURE = [ 'Buy milk for +her', 'fancy pants @work' ];
-  this.EXPECTED = [ 'Buy milk for <span class="context">+her</span>','fancy pants <span class="project">@work</span>' ];
+  this.EXPECTED = [ 'Buy milk for <span class="project">+her</span>','fancy pants <span class="context">@work</span>' ];
 };
 
 GeneratorTests.prototype.testPresence = function() {
