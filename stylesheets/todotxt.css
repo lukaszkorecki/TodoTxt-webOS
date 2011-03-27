@@ -8,8 +8,8 @@ div[data-done="true"] {
   color: gray;
 }
 
-.doc_add {
+.doc_add, .selected .doc_add {
   background-image: url(../images/doc_plus.png);
   background-repeat: no-repeat;
-  background-position: 5px 4px;
+  background-position: 5px 4px !important;
 }
