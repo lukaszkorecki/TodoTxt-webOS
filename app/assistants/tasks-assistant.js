@@ -6,19 +6,9 @@ function TasksAssistant() {
 }
 
 TasksAssistant.prototype.setup = function() {
-  this.controller.setupWidget("drawerId",
-        this.attributes = {
-            modelProperty: 'open',
-            unstyled: false
-        },
-        this.model = {
-            open: false
-        }
-    );
-
-
 
   this.addMenu();
+  this.setupNewTaskForm();
 
   var data = this.tasks.getAll();
 
@@ -40,6 +30,8 @@ TasksAssistant.prototype.dividerFunction =  function(el) {
 };
 
 TasksAssistant.prototype.addMenu = function() {
+
+
   this.controller.setupWidget(Mojo.Menu.viewMenu,
       this.attributes = {
         spacerHeight: 0,
@@ -53,7 +45,7 @@ TasksAssistant.prototype.addMenu = function() {
           {icon : "sync", command : 'refresh-tasks'}
         ]
       }
-    );
+      );
 };
 
 TasksAssistant.prototype.handleCommand = function(event) {
@@ -72,6 +64,38 @@ TasksAssistant.prototype.toggleNewTaskForm = function() {
   this.controller.get('drawerId').mojo.toggleState();
 };
 
+TasksAssistant.prototype.setupNewTaskForm = function() {
+  // drawer
+  this.controller.setupWidget("drawerId",
+        this.attributes = {
+            modelProperty: 'open',
+            unstyled: false
+        },
+        this.model = {
+            open: false
+        }
+    );
+  // text field
+  this.controller.setupWidget("taskContent",
+    this.attributes = {
+      hintText: $L("(B) Pick up flowers @shop +birthday"),
+      multiline: false,
+      enterSubmits: false,
+      focus: true
+    },
+    this.model = {
+      value: "",
+      disabled: false
+    });
+
+  // save button
+  this.controller.setupWidget("saveNewTask",
+    this.attributes = { },
+    this.model = {
+      label : "Add",
+      disabled: false
+  });
+};
 
 TasksAssistant.prototype.activate = function(event) {
 	/* put in event handlers here that should only be in effect when this scene is active. For
