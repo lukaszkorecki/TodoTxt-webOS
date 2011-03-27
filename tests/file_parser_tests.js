@@ -19,7 +19,9 @@ ParserTests.prototype.testContentloading = function() {
   var fp = new FileParser();
   fp.load(this.FIXTURE_FILE);
 
-  Mojo.assertArray(fp.content, this.FIXTURE_ARRAY, 'Loads content and splits it into an array');
+  Mojo.assertEqual(fp.content[0], this.FIXTURE_ARRAY[0], 'Loads content and splits it into an array');
+  Mojo.assertEqual(fp.content[2], this.FIXTURE_ARRAY[1], 'Loads content and splits it into an array');
+  Mojo.assertEqual(fp.content[2], this.FIXTURE_ARRAY[2], 'Loads content and splits it into an array');
   return Mojo.Test.passed;
 };
 

@@ -1,5 +1,5 @@
 var FileParser = function(lineSeparator) {
-  this.lineSeparator = lineSeparator || "\n";
+  this.lineSeparator = "\n";
 
   this.priorityRegex = /^\(\w\)/i;
   this.doneRegex = /^x\ /i;
@@ -8,6 +8,7 @@ var FileParser = function(lineSeparator) {
 
 FileParser.prototype.load = function(fileContent) {
   this.content = fileContent.split(this.lineSeparator);
+  return this;
 };
 
 FileParser.prototype.parseLine = function(line) {
@@ -26,8 +27,4 @@ FileParser.prototype.parseLine = function(line) {
   if(createdAt) ret['createdAt'] = createdAt;
   if(priority) ret['priority'] = priority[1];
   return ret;
-};
-
-FileParser.prototype.parseFile = function() {
-  return this.content.map(this.parseLine);
 };

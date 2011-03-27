@@ -1,39 +1,21 @@
 function TasksAssistant() {
-  this.file_parser = new FileParser();
-  this.html_gen = new TaskHtmlGenerator();
+  this.tasks = new Tasks({
+    onSuccess : function() { Mojo.Log.info('we got a db!'); },
+    onFailure : function() { Mojo.Log.error('we dont got a db! FIAL'); }
+  });
 }
 
-TasksAssistant.prototype.getData = function() {
-  var data = [
-       '(A) +chore Pay water @important',
-       '(A) 2011-03-06 Pay in £22 for the +card @important',
-       '(E) @web Check the domain names, and think about paying for plugawy.me',
-       'Write mor tests for +Omoide',
-       'x (B) crete first app @webos'
-    ];
-
-  return data.map(function(element){
-    var obj = this.file_parser.parseLine(element);
-    obj.content = this.html_gen.getHtml(obj.content);
-    return obj;
-  }.bind(this));
-
-};
-
 TasksAssistant.prototype.setup = function() {
-  this.data = { };
-  this.data['items'] = this.getData();
 
-		this.model = { disabled: false };
+  var data = this.tasks.getAll();
 
   var attributes = {
     swipeToDelete: false,
     reorderable: false,
-    disabledProperty: 'disabled',
     itemTemplate: 'tasks/itemTemplate',
     dividerFunction : this.dividerFunction
   };
-  this.controller.setupWidget('tasksList', attributes, this.data);
+  this.controller.setupWidget('tasksList', attributes, data);
 
 };
 
