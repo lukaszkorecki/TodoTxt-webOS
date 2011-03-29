@@ -106,6 +106,16 @@ TasksAssistant.prototype.setupNewTaskForm = function() {
       label : "Add",
       disabled: false
   });
+
+  Mojo.Event.listen(this.controller.get('saveNewTask'), Mojo.Event.tap, this.saveTask);
+};
+
+TasksAssistant.prototype.saveTask = function(event) {
+  var val = this.controller.get('taskContent').mojo.getValue();
+  event.preventDefault();
+  Mojo.Log.info(val);
+  return false;
+
 };
 
 TasksAssistant.prototype.activate = function(event) {
