@@ -1,7 +1,8 @@
 var Tasks = function(name, callbacks) {
   this.file_parser = new FileParser();
   this.html_gen = new TaskHtmlGenerator();
-  this.data = [];
+  this.items = [];
+  this.key = "itemStore";
 
   if(callbacks) {
     this.db = new Mojo.Depot({
@@ -20,30 +21,32 @@ Tasks.prototype.getAll = function(newContent) {
 
   _data = this.file_parser.load(file).content;
 
-  this.data = _data.map(function(element){
+  this.items = _data.map(function(element){
     var obj = this.file_parser.parseLine(element);
     obj.content = this.html_gen.getHtml(obj.content);
     return obj;
   }.bind(this));
 
-  return { 'items' : this.data };
+  return this;
 };
 
-// TODO this needs to store a list of available keys for getAll query
-// and generate a key for example using:
-// atob(encodeURIComponent(content+done+date+priority)
-Tasks.prototype.add = function(key, value, callbacks) {
-  this.db.add(key, value, callbacks.onSuccess, callbacks.onFailure);
-};
-// TODO this needs to update key list (which is also stored in db)
-Tasks.prototype.remove = function(key,  callbacks) {
-  this.db.discard(key,  callbacks.onSuccess, callbacks.onFailure);
+// adds an item to list
+Tasks.prototype.add = function( item, callbacks) {
+  this.items.push(item);
+  this.db.add(this.key,this.items, function() { callbacks.onSuccess(this.items); }, callbacks.onFailure);
 };
 
-// XXX key is transparent for the user!
-Tasks.prototype.get = function(key,  callbacks) {
-  this.db.get(key,  callbacks.onSuccess, callbacks.onFailure);
+Tasks.prototype.update = function(id, item, callbacks) {
+  this.items[id] = item;
+  this.db.add(this.key,this.items, function() { callbacks.onSuccess(this.items); }, callbacks.onFailure);
 };
 
-// TODO add getAll method
+// clears the items
+Tasks.prototype.remove = function(callbacks) {
+  this.db.discard(this.key,  callbacks.onSuccess, callbacks.onFailure);
+};
 
+// retreive all items
+Tasks.prototype.get = function(callbacks) {
+  this.db.get(this.key,  callbacks.onSuccess, callbacks.onFailure);
+};
