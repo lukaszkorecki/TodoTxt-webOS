@@ -1,8 +1,16 @@
 <div class="palm-header-spacer"></div>
 <div x-mojo-element="Drawer" id="drawerId" class="drawerClass" name="drawerName">
-  <div x-mojo-element="TextField" id="taskContent" class="textFieldClass" name="taskContent">
+  <div class="palm-group">
+    <div class="palm-group-title" id="shakey-toggle">New task</div>
+    <div x-mojo-element="TextField" id="taskContent" class="textFieldClass" name="taskContent"></div>
+    <p>
+      <strong>Help</strong><br/>
+      <span class="context">@something</span> - <strong>a context</strong><br/>
+      <span class="project">+something</span> - <strong>a project</strong><br />
+      (B) Buy flowers for <span class="context">@mum</span> for her <span class="project">+birthday</span>
+    </p>
+    <div x-mojo-element="Button" id="saveNewTask" class="buttonClass" name="saveNewTask"></div>
   </div>
-  <div x-mojo-element="Button" id="saveNewTask" class="buttonClass" name="saveNewTask"></div>
 
 </div>
 <div id="tasksList" x-mojo-element='List'></div>
