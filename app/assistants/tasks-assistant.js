@@ -1,4 +1,5 @@
 function TasksAssistant() {
+  this.taskCache = "";
   this.tasks = new Tasks({
     onSuccess : function() { Mojo.Log.info('we got a db!'); },
     onFailure : function() { Mojo.Log.error('we dont got a db! FIAL'); }
@@ -30,8 +31,7 @@ TasksAssistant.prototype.dividerFunction =  function(el) {
 };
 
 TasksAssistant.prototype.addMenu = function() {
-
-
+  // Menu setup
   this.controller.setupWidget(Mojo.Menu.viewMenu,
       this.attributes = {
         spacerHeight: 0,
@@ -70,50 +70,49 @@ TasksAssistant.prototype.toggleNewTaskForm = function() {
 TasksAssistant.prototype.refreshTasks = function() {
 
   Mojo.Log.info('refreshing tasks!');
-var file ="(A) +chore Pay +bills @important\n(A) 2011-03-06 Pay +creditcards @important\n(A) 2011-03-26 check whether i have to Pay in $$$ @bank\n(B) 2011-03-26 Do taxes @home\n(C) 2011-03-26 Write the test code @home\n(D) 2011-03-27 Finish +cooking the salad @home\nWrite mor tests for +Omoide";
-
-  this.data = this.tasks.getAll(file);
+  this.data = this.tasks.getAll(this.taskCache+"\n");
   this.controller.get('tasksList').mojo.noticeUpdatedItems(0, this.data.items);
 };
 TasksAssistant.prototype.setupNewTaskForm = function() {
   // drawer
   this.controller.setupWidget("drawerId",
-        this.attributes = {
-            modelProperty: 'open',
-            unstyled: false
-        },
-        this.model = {
-            open: false
-        }
+      this.attributes = {
+        modelProperty: 'open',
+        unstyled: true
+      },
+      this.model = { open: false }
     );
+
   // text field
-  this.controller.setupWidget("taskContent",
-    this.attributes = {
-      hintText: $L("(B) Pick up flowers @shop +birthday"),
+  this.controller.setupWidget("taskContent", {
+      hintText: $L("Tap to edit"),
       multiline: false,
       enterSubmits: false,
       focus: true
     },
-    this.model = {
+    {
       value: "",
       disabled: false
-    });
+    }
+  );
+  Mojo.Event.listen(this.controller.get('taskContent'), Mojo.Event.propertyChange, this.handleUpdate);
 
   // save button
-  this.controller.setupWidget("saveNewTask",
-    this.attributes = { },
-    this.model = {
-      label : "Add",
-      disabled: false
-  });
-
+  this.controller.setupWidget("saveNewTask",  { }, { label : "Add todo", disabled: false });
   Mojo.Event.listen(this.controller.get('saveNewTask'), Mojo.Event.tap, this.saveTask);
 };
 
+TasksAssistant.prototype.handleUpdate = function(event) {
+  this.taskCache = event.value;
+  Mojo.Log.info(this.taskCache);
+  return false;
+
+};
+
+
 TasksAssistant.prototype.saveTask = function(event) {
-  var val = this.controller.get('taskContent').mojo.getValue();
   event.preventDefault();
-  Mojo.Log.info(val);
+  Mojo.Log.info(this.taskCache);
   return false;
 
 };
