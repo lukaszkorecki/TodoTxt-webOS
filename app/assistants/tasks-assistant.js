@@ -10,6 +10,8 @@ function TasksAssistant() {
   this.FIXTURE += "(C) 2011-03-26 Write the test code @home\n";
   this.FIXTURE += "x 2011-03-05 Move view code to Web Workers +mikrob\n";
   this.FIXTURE += "(D) 2011-03-06 2011-03-06 Make spaghetti @home +cooking\n";
+  this.FIXTURE += "(B) 2011-03-06 2011-03-06 Make spaghetti @home +cooking\n";
+  this.FIXTURE += "(E) 2011-03-06 2011-03-06 Make spaghetti @home +cooking\n";
   this.FIXTURE += "x 2011-03-18 2011-03-06 Check bus ticket expiration date @home +chore\n";
   this.FIXTURE += 'take a look at me now';
 }

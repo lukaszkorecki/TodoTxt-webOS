@@ -31,9 +31,10 @@ FileParser.prototype.parseLine = function(line) {
   var ret = {
     content : content.trim(),
     done : isDone ,
-    priorityNum : priorityNum,
-    priority : priority
+    priorityNum : priorityNum
   };
+
+  if(priorityNum < 100 ) ret.priority = priority;
 
   if(createdAt) ret.createdAt = createdAt;
   return ret;

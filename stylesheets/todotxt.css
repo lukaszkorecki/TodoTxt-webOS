@@ -7,3 +7,9 @@ div[data-done="true"] {
   text-decoration: line-through;
   color: gray;
 }
+
+.A { color: red}
+.B { color: pink }
+.C { color: green }
+.D { color: blue }
+.E { color: violet}
