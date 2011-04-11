@@ -4,6 +4,7 @@ var FileParser = function(lineSeparator) {
   this.priorityRegex = /^\(\w\)/i;
   this.doneRegex = /^x\ /i;
   this.dateRegex = /\d{4}-\d{2}-\d{2}/;
+  this.priorityNumMapping = {A : 1, B: 2, C : 3, D : 4, E : 5, 'none' : 9, 'done' : 100, x : 101};
 };
 
 FileParser.prototype.load = function(fileContent) {
@@ -16,15 +17,24 @@ FileParser.prototype.parseLine = function(line) {
   var isDone = !!(line.match(this.doneRegex));
   var content = line.replace(this.doneRegex,'');
 
-  var priority = line.match(this.priorityRegex) === null ? '' : line.match(this.priorityRegex)[0];
+  var priority = line.match(this.priorityRegex) === null ? 'none' : line.match(/\w/i)[0];
   content = content.replace(this.priorityRegex, '');
 
   var createdAt = line.match(this.dateRegex) === null ? false : line.match(this.dateRegex)[0];
   content = content.replace(this.dateRegex,'');
 
-  var ret = { content : content.trim(), done : isDone };
+  var priorityNum = this.priorityNumMapping[priority];
+  if(isDone) priorityNum = this.priorityNumMapping.done;
+  // legacy
+  if(priorityNum === 9) priority = '';
 
-  if(createdAt) ret['createdAt'] = createdAt;
-  if(priority) ret['priority'] = priority[1];
+  var ret = {
+    content : content.trim(),
+    done : isDone ,
+    priorityNum : priorityNum,
+    priority : priority
+  };
+
+  if(createdAt) ret.createdAt = createdAt;
   return ret;
 };

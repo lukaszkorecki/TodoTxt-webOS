@@ -10,5 +10,11 @@
     "source" : "tests/html_generator_test.js",
     "testFunction" : "GeneratorTests"
 
+  },
+  {
+    "title" : "Tasks Model test",
+    "source" : "tests/tasks_model_test.js",
+    "testFunction" : "TasksTest"
+
   }
 ]

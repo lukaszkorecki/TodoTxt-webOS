@@ -14,12 +14,7 @@ var Tasks = function(name, callbacks) {
 
 
 Tasks.prototype.getAll = function(newContent) {
-  var file='',  _data=[];
-
-  // TODO this will be loaded via db and or dropbox
-  file = newContent || "(A) +chore Pay water @important\n(A) 2011-03-06 Pay in £22 for the +card @important\n(E) @web Check the domain names, and think about paying for plugawy.me\nWrite mor tests for +Omoide\nx (B) crete first app @webos\n";
-
-  _data = this.file_parser.load(file).content;
+  var _data = this.file_parser.load(newContent).content;
 
   this.items = _data.map(function(element){
     var obj = this.file_parser.parseLine(element);
@@ -27,13 +22,17 @@ Tasks.prototype.getAll = function(newContent) {
     return obj;
   }.bind(this));
 
+  this.sortItems();
   return this;
 };
 
 // adds an item to list
 Tasks.prototype.add = function( item, callbacks) {
-  this.items.push(item);
-  this.db.add(this.key,this.items, function() { callbacks.onSuccess(this.items); }, callbacks.onFailure);
+  var _item = this.file_parser.parseLine(item);
+  _item.content = this.html_gen.getHtml(_item.content);
+  this.items.push(_item);
+  this.sortItems();
+  // this.db.add(this.key,this.items, function() { callbacks.onSuccess(this.items); }, callbacks.onFailure);
 };
 
 Tasks.prototype.update = function(id, item, callbacks) {
@@ -49,4 +48,11 @@ Tasks.prototype.remove = function(callbacks) {
 // retreive all items
 Tasks.prototype.get = function(callbacks) {
   this.db.get(this.key,  callbacks.onSuccess, callbacks.onFailure);
+};
+
+Tasks.prototype.sortItems = function() {
+  var its = this.items.sort(function(a,b){
+    return a.priorityNum - b.priorityNum;
+  });
+  this.items = its;
 };
