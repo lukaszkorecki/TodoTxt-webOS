@@ -8,7 +8,8 @@ var FileParser = function(lineSeparator) {
 };
 
 FileParser.prototype.load = function(fileContent) {
-  this.content = fileContent.split(this.lineSeparator);
+
+  this.content = (fileContent || "").split(this.lineSeparator);
   return this;
 };
 

@@ -18,6 +18,7 @@ Tasks.prototype.getAll = function(newContent) {
 
   this.items = _data.map(function(element){
     var obj = this.file_parser.parseLine(element);
+    obj.raw_content = obj.content;
     obj.content = this.html_gen.getHtml(obj.content);
     return obj;
   }.bind(this));
@@ -51,8 +52,7 @@ Tasks.prototype.get = function(callbacks) {
 };
 
 Tasks.prototype.sortItems = function() {
-  var its = this.items.sort(function(a,b){
-    return a.priorityNum - b.priorityNum;
-  });
-  this.items = its;
+  this.iems = this.items.filter(function(val) { return val != undefined; } );
+  this.items = this.items.sort(function(a,b){ return a.priorityNum - b.priorityNum; });
+  return this;
 };

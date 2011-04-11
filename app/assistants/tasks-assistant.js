@@ -30,28 +30,7 @@ TasksAssistant.prototype.setup = function() {
     dividerFunction : this.dividerFunction
   };
   this.controller.setupWidget('tasksList', attributes, this.data);
-
-
-  /*
-   * use this to delegate actions from individual items:
-  this.controller.showAlertDialog({
-    onChoose: function(value) {this.outputDisplay.innerHTML = $L("Alert result = ") + value;},
-    title: $L("Filet Mignon"),
-    message: $L("How would you like your steak done?"),
-    choices:[
-      {label:$L('Rare'), value:"rare", type:'affirmative'},
-      {label:$L("Medium"), value:"med"},
-      {label:$L("Overcooked"), value:"well", type:'negative'},
-      {label:$L("Nevermind"), value:"cancel", type:'dismiss'}
-    ] });
-  */
-};
-
-TasksAssistant.prototype.dividerFunction =  function(el) {
-  var p = el.priority;
-  if(el.done === true) p = 'X';
-  if(p == 'none') p = '-';
-  return p;
+  Mojo.Event.listen(this.controller.get('tasksList'), Mojo.Event.listTap, this.taskDialog.bind(this));
 };
 
 TasksAssistant.prototype.addMenu = function() {
@@ -72,30 +51,6 @@ TasksAssistant.prototype.addMenu = function() {
       );
 };
 
-TasksAssistant.prototype.handleCommand = function(event) {
-  if (event.type === Mojo.Event.command) {
-    switch (event.command) {
-      case 'add-task':
-        this.toggleNewTaskForm();
-        break;
-      case 'refresh-tasks':
-        this.refreshTasks();
-        break;
-      default:
-        break;
-    }
-  }
-};
-
-TasksAssistant.prototype.toggleNewTaskForm = function() {
-  this.controller.get('drawerId').mojo.toggleState();
-};
-
-TasksAssistant.prototype.refreshTasks = function() {
-  Mojo.Log.info('refreshing tasks!');
-  this.controller.get('tasksList').mojo.invalidateItems(0);
-  this.controller.get('tasksList').mojo.noticeUpdatedItems(0, this.tasks.items);
-};
 TasksAssistant.prototype.setupNewTaskForm = function() {
   // drawer
   this.controller.setupWidget("drawerId",
@@ -123,6 +78,75 @@ TasksAssistant.prototype.setupNewTaskForm = function() {
   this.controller.setupWidget("saveNewTask",  { }, { label : "Add todo", disabled: false });
   Mojo.Event.listen(this.controller.get('saveNewTask'), Mojo.Event.tap, this.saveTask.bind(this));
 };
+
+TasksAssistant.prototype.taskDialog = function(event) {
+  var message = event.item.raw_content,
+      task_id = event.index;
+  var fn = this.handleTaskActions;
+
+  this.controller.showAlertDialog({
+    onChoose: fn,
+    title: 'Take action!',
+    message: message,
+    choices:[
+      {label:'Mark as done', value: { task : 'done', id : task_id} , type:'affirmative'},
+      {label:'Remove', value:{ task : 'remove', id : task_id}, type:'negative'},
+      {label:$L("Nevermind"), value:"cancel", type:'dismiss'}
+    ] });
+};
+
+
+TasksAssistant.prototype.dividerFunction =  function(el) {
+  var p = el.priority;
+  if(el.done === true) p = 'X';
+  if(p == 'none') p = '-';
+  return p;
+};
+
+TasksAssistant.prototype.toggleNewTaskForm = function() {
+  this.controller.get('drawerId').mojo.toggleState();
+};
+
+TasksAssistant.prototype.handleCommand = function(event) {
+  if (event.type === Mojo.Event.command) {
+    switch (event.command) {
+      case 'add-task':
+        this.toggleNewTaskForm();
+        break;
+      case 'refresh-tasks':
+        this.refreshTasks();
+        break;
+      default:
+        break;
+    }
+  }
+};
+
+TasksAssistant.prototype.handleTaskActions = function(data) {
+  console.dir(this.data);
+  switch(data.task) {
+    case 'remove':
+      delete this.data.items[data.id];
+      break;
+    case 'done':
+      this.data.items[data.id].done = true;
+      this.data.items[data.id].priorityNum = 100;
+      break;
+    default:
+      break;
+  }
+  if(data != 'cancel') this.refreshTasks();
+};
+
+
+
+TasksAssistant.prototype.refreshTasks = function() {
+  Mojo.Log.info('refreshing tasks!');
+  this.controller.get('tasksList').mojo.invalidateItems(0);
+  this.controller.get('tasksList').mojo.noticeUpdatedItems(0, this.tasks.sortItems().items);
+};
+
+
 
 TasksAssistant.prototype.saveTask = function(event) {
   event.preventDefault();
