@@ -31,6 +31,20 @@ TasksAssistant.prototype.setup = function() {
   };
   this.controller.setupWidget('tasksList', attributes, this.data);
 
+
+  /*
+   * use this to delegate actions from individual items:
+  this.controller.showAlertDialog({
+    onChoose: function(value) {this.outputDisplay.innerHTML = $L("Alert result = ") + value;},
+    title: $L("Filet Mignon"),
+    message: $L("How would you like your steak done?"),
+    choices:[
+      {label:$L('Rare'), value:"rare", type:'affirmative'},
+      {label:$L("Medium"), value:"med"},
+      {label:$L("Overcooked"), value:"well", type:'negative'},
+      {label:$L("Nevermind"), value:"cancel", type:'dismiss'}
+    ] });
+  */
 };
 
 TasksAssistant.prototype.dividerFunction =  function(el) {
