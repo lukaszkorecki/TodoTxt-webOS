@@ -1,6 +1,8 @@
 require 'rubygems'
 require 'json'
 require 'fileutils'
+require 'yaml'
+require 'coffee-script'
 include FileUtils
 
 namespace :webos do
@@ -40,4 +42,22 @@ namespace :webos do
     STDOUT << `palm-launch -p "{mojoTest:true}" #{APP_PACKAGE}`
   end
 
+
+end
+
+desc "Compile Coffeescript"
+task :compile do
+  Dir['./**/*.coffee'].each do |cs_file|
+    begin
+    cs = File.read cs_file
+    js = CoffeeScript.compile cs, :bare => true
+    rescue => e
+      puts "Error compiling #{cs_file}"
+      puts e.to_yaml
+      exit 1
+    end
+    File.open(cs_file.sub('.coffee', '.js'), 'w') do |file|
+      file.write js
+    end
+  end
 end
