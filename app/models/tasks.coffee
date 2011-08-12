@@ -1,16 +1,15 @@
 class Tasks
-  constructor : (name, callbacks) ->
+  constructor : ->
 
     @file_parser = new FileParser()
     @html_gen = new TaskHtmlGenerator()
     @items = []
-    @key = "itemStore"
+    @db = new Lawnchair( ->)
 
-    if callbacks
-      @db = new Mojo.Depot({
-        name : name,
-        version : 1
-      }, callbacks.onSuccess, callbacks.onFailure)
+  load : (callback)->
+    @items = @db.all (data) ->
+      _data = data.map (item) -> @html_gen.getHtml item.task.content
+      callback _data
 
   getAll : (newContent) ->
     _data = @file_parser.load(newContent).content
@@ -23,14 +22,17 @@ class Tasks
       obj
 
     @sortItems()
-    this
+    @
+
   # adds an item to list
-  add : ( item, callbacks) ->
+  add : ( item, callback) ->
     _item = @file_parser.parseLine(item)
     _item.content = @html_gen.getHtml(_item.content)
     @items.push(_item)
-    @sortItems()
-    # @db.add(@key,@items, function() { callbacks.onSuccess(@items) }, callbacks.onFailure)
+    @db.save { task : _item }, (e) =>
+      console.dir(e)
+      @sortItems()
+      callback()
 
   update : (id, item, callbacks) ->
     @items[id] = item

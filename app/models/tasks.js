@@ -1,18 +1,21 @@
 var Tasks;
 var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 Tasks = (function() {
-  function Tasks(name, callbacks) {
+  function Tasks() {
     this.file_parser = new FileParser();
     this.html_gen = new TaskHtmlGenerator();
     this.items = [];
-    this.key = "itemStore";
-    if (callbacks) {
-      this.db = new Mojo.Depot({
-        name: name,
-        version: 1
-      }, callbacks.onSuccess, callbacks.onFailure);
-    }
+    this.db = new Lawnchair(function() {});
   }
+  Tasks.prototype.load = function(callback) {
+    return this.items = this.db.all(function(data) {
+      var _data;
+      _data = data.map(function(item) {
+        return this.html_gen.getHtml(item.task.content);
+      });
+      return callback(_data);
+    });
+  };
   Tasks.prototype.getAll = function(newContent) {
     var _data;
     _data = this.file_parser.load(newContent).content;
@@ -26,12 +29,18 @@ Tasks = (function() {
     this.sortItems();
     return this;
   };
-  Tasks.prototype.add = function(item, callbacks) {
+  Tasks.prototype.add = function(item, callback) {
     var _item;
     _item = this.file_parser.parseLine(item);
     _item.content = this.html_gen.getHtml(_item.content);
     this.items.push(_item);
-    return this.sortItems();
+    return this.db.save({
+      task: _item
+    }, __bind(function(e) {
+      console.dir(e);
+      this.sortItems();
+      return callback();
+    }, this));
   };
   Tasks.prototype.update = function(id, item, callbacks) {
     this.items[id] = item;

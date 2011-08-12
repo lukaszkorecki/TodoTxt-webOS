@@ -1,37 +1,30 @@
 var TasksAssistant;
+var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 TasksAssistant = (function() {
   function TasksAssistant() {
     this.taskCache = "";
-    this.tasks = new Tasks({
-      onSuccess: function() {
-        return Mojo.Log.info('we got a db!');
-      },
-      onFailure: function() {
-        return Mojo.Log.error('we dont got a db! FIAL');
-      }
-    });
-    this.FIXTURE = "(A) 2011-03-05 Do more research about Barcelona +holiday\n";
-    this.FIXTURE += "x 2011-03-12 2011-03-11 Clean up the fridge @chore\n";
-    this.FIXTURE += "(C) 2011-03-26 Write the test code @home\n";
-    this.FIXTURE += "x 2011-03-05 Move view code to Web Workers +mikrob\n";
-    this.FIXTURE += "(D) 2011-03-06 2011-03-06 Make spaghetti @home +cooking\n";
-    this.FIXTURE += "(B) 2011-03-06 2011-03-06 Make spaghetti @home +cooking\n";
-    this.FIXTURE += "(E) 2011-03-06 2011-03-06 Make spaghetti @home +cooking\n";
-    this.FIXTURE += "x 2011-03-18 2011-03-06 Check bus ticket expiration date @home +chore\n";
-    this.FIXTURE += 'take a look at me now';
+    this.tasks = new Tasks();
   }
   TasksAssistant.prototype.setup = function() {
     var attributes;
     this.addMenu();
     this.setupNewTaskForm();
-    this.data = this.tasks.getAll(this.FIXTURE);
+    this.tasks.load(__bind(function(data) {
+      this.data = data;
+      return this.refreshTasks();
+    }, this));
     attributes = {
       swipeToDelete: false,
       reorderable: false,
       itemTemplate: 'tasks/itemTemplate',
       dividerFunction: this.dividerFunction
     };
-    this.controller.setupWidget('tasksList', attributes, this.data);
+    this.controller.setupWidget('tasksList', {
+      swipeToDelete: false,
+      reorderable: false,
+      itemTemplate: 'tasks/itemTemplate',
+      dividerFunction: this.dividerFunction
+    }, this.data);
     return Mojo.Event.listen(this.controller.get('tasksList'), Mojo.Event.listTap, this.taskDialog.bind(this));
   };
   TasksAssistant.prototype.addMenu = function() {
@@ -164,10 +157,11 @@ TasksAssistant = (function() {
   };
   TasksAssistant.prototype.saveTask = function(event) {
     event.preventDefault();
-    this.tasks.add(this.model.value);
-    this.refreshTasks();
-    this.controller.get('taskContent').value = "";
-    this.toggleNewTaskForm();
+    this.tasks.add(this.model.value, __bind(function() {
+      this.refreshTasks();
+      this.controller.get('taskContent').value = "";
+      return this.toggleNewTaskForm();
+    }, this));
     return false;
   };
   TasksAssistant.prototype.activate = function() {};

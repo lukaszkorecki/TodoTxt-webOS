@@ -1,26 +1,16 @@
 class TasksAssistant
   constructor : ->
     @taskCache = ""
-    @tasks = new Tasks(
-      onSuccess : ->  Mojo.Log.info('we got a db!')
-      onFailure : ->Mojo.Log.error('we dont got a db! FIAL')
-    )
+    @tasks = new Tasks()
 
-    @FIXTURE = "(A) 2011-03-05 Do more research about Barcelona +holiday\n"
-    @FIXTURE += "x 2011-03-12 2011-03-11 Clean up the fridge @chore\n"
-    @FIXTURE += "(C) 2011-03-26 Write the test code @home\n"
-    @FIXTURE += "x 2011-03-05 Move view code to Web Workers +mikrob\n"
-    @FIXTURE += "(D) 2011-03-06 2011-03-06 Make spaghetti @home +cooking\n"
-    @FIXTURE += "(B) 2011-03-06 2011-03-06 Make spaghetti @home +cooking\n"
-    @FIXTURE += "(E) 2011-03-06 2011-03-06 Make spaghetti @home +cooking\n"
-    @FIXTURE += "x 2011-03-18 2011-03-06 Check bus ticket expiration date @home +chore\n"
-    @FIXTURE += 'take a look at me now'
 
   setup : ->
     @addMenu()
     @setupNewTaskForm()
 
-    @data = @tasks.getAll(@FIXTURE)
+    @tasks.load (data) =>
+      @data = data
+      @refreshTasks()
 
     attributes = {
       swipeToDelete: false,
@@ -29,12 +19,14 @@ class TasksAssistant
       dividerFunction : @dividerFunction
     }
 
-    @controller.setupWidget('tasksList', attributes, @data)
+    @controller.setupWidget('tasksList', {
+      swipeToDelete: false,
+      reorderable: false,
+      itemTemplate: 'tasks/itemTemplate',
+      dividerFunction : @dividerFunction
+    }, @data)
 
-    Mojo.Event.listen(
-      @controller.get('tasksList'),
-      Mojo.Event.listTap, @taskDialog.bind(@)
-    )
+    Mojo.Event.listen( @controller.get('tasksList'), Mojo.Event.listTap, @taskDialog.bind(@))
 
   addMenu : ->
     # Menu setup
@@ -157,10 +149,10 @@ class TasksAssistant
 
   saveTask : (event) ->
     event.preventDefault()
-    @tasks.add(this.model.value)
-    @refreshTasks()
-    @controller.get('taskContent').value = ""
-    @toggleNewTaskForm()
+    @tasks.add this.model.value, =>
+      @refreshTasks()
+      @controller.get('taskContent').value = ""
+      @toggleNewTaskForm()
     false
   activate : ->
   deactivate : ->
