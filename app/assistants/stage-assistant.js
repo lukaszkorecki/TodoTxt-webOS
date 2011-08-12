@@ -1,7 +1,8 @@
-function StageAssistant() {
-	/* this is the creator function for your stage assistant object */
-}
-
-StageAssistant.prototype.setup = function() {
-  this.controller.pushScene('tasks');
-};
+var StageAssistant;
+StageAssistant = (function() {
+  function StageAssistant() {}
+  StageAssistant.prototype.setup = function() {
+    return this.controller.pushScene('tasks');
+  };
+  return StageAssistant;
+})();
