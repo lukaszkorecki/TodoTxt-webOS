@@ -47,7 +47,10 @@ end
 
 desc "Compile Coffeescript"
 task :compile do
-  Dir['./**/*.coffee'].each do |cs_file|
+  Dir['source/**/*.coffee'].each do |cs_file|
+    js_file = cs_file.sub('source/', '').sub('.coffee', '.js')
+    puts "Compiling #{cs_file} -> #{js_file}"
+
     begin
     cs = File.read cs_file
     js = CoffeeScript.compile cs, :bare => true
@@ -56,8 +59,11 @@ task :compile do
       puts e.to_yaml
       exit 1
     end
-    File.open(cs_file.sub('.coffee', '.js'), 'w') do |file|
+
+    File.open(js_file, 'w') do |file|
       file.write js
     end
+
+    puts "done"
   end
 end
