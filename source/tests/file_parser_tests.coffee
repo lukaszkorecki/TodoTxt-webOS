@@ -12,6 +12,7 @@ class ParserTests
       { priority : 'E', content : 'fancy pants @ork', done : true }
       { priority : 'B', content : 'crete first app @ebos', done : true }
     ]
+
   testPresence : ->
     Mojo.assertDefined(FileParser, 'FileParser class is defined')
     Mojo.Test.passed

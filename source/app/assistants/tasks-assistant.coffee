@@ -3,7 +3,6 @@ class TasksAssistant
     @taskCache = ""
     @tasks = new Tasks()
 
-
   setup : ->
     @addMenu()
     @setupNewTaskForm()
