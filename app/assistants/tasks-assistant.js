@@ -6,33 +6,32 @@ TasksAssistant = (function() {
     this.tasks = new Tasks();
   }
   TasksAssistant.prototype.setup = function() {
-    var attributes;
-    this.addMenu();
     this.setupNewTaskForm();
-    this.tasks.load(__bind(function(data) {
+    this.addMenu();
+    return this.tasks.load(__bind(function(data) {
       this.data = data;
-      return this.refreshTasks();
+      return this.addTaskList(data);
     }, this));
-    attributes = {
+  };
+  TasksAssistant.prototype.addTaskList = function(data) {
+    this.data = data.map(function(el) {
+      return el.content;
+    });
+    this.taskListAttributes = {
       swipeToDelete: false,
       reorderable: false,
       itemTemplate: 'tasks/itemTemplate',
-      dividerFunction: this.dividerFunction
+      dividerFunction: TasksAssistant.prototype.dividerFunction
     };
-    this.controller.setupWidget('tasksList', {
-      swipeToDelete: false,
-      reorderable: false,
-      itemTemplate: 'tasks/itemTemplate',
-      dividerFunction: this.dividerFunction
-    }, this.data);
+    this.controller.setupWidget('tasksList', this.taskListAttributes, this.data);
     return Mojo.Event.listen(this.controller.get('tasksList'), Mojo.Event.listTap, this.taskDialog.bind(this));
   };
   TasksAssistant.prototype.addMenu = function() {
-    this.attributes = {
+    this.menuAttributes = {
       spacerHeight: 0,
       menuClass: 'no-fade'
     };
-    this.model = {
+    this.menuModel = {
       visible: true,
       items: [
         {
@@ -46,10 +45,10 @@ TasksAssistant = (function() {
         }
       ]
     };
-    return this.controller.setupWidget(Mojo.Menu.viewMenu, this.attributes, this.model);
+    return this.controller.setupWidget(Mojo.Menu.viewMenu, this.menuAttributes, this.menuModel);
   };
   TasksAssistant.prototype.setupNewTaskForm = function() {
-    this.attributes = {
+    this.formAttributes = {
       modelProperty: 'open',
       unstyled: true
     };
@@ -57,7 +56,7 @@ TasksAssistant = (function() {
       open: false
     };
     this.controller.setupWidget("drawerId", this.attributes, this.drawerState);
-    this.model = {
+    this.formModel = {
       value: '',
       disabled: false
     };
@@ -67,7 +66,7 @@ TasksAssistant = (function() {
       enterSubmits: false,
       modelProperty: 'value',
       focus: true
-    }, this.model);
+    }, this.formModel);
     this.controller.setupWidget("saveNewTask", {}, {
       label: "Add todo",
       disabled: false
@@ -150,10 +149,15 @@ TasksAssistant = (function() {
       return this.refreshTasks();
     }
   };
-  TasksAssistant.prototype.refreshTasks = function() {
-    Mojo.Log.info('refreshing tasks!');
-    this.controller.get('tasksList').mojo.invalidateItems(0);
-    return this.controller.get('tasksList').mojo.noticeUpdatedItems(0, this.tasks.sortItems().items);
+  TasksAssistant.prototype.refreshTasks = function(cb) {
+    return this.tasks.load(__bind(function(data) {
+      if (cb) {
+        cb(data);
+      }
+      Mojo.Log.info('refreshing tasks!');
+      this.controller.get('tasksList').mojo.invalidateItems(0);
+      return this.controller.get('tasksList').mojo.noticeUpdatedItems(0, this.tasks.sortItems().items);
+    }, this));
   };
   TasksAssistant.prototype.saveTask = function(event) {
     event.preventDefault();

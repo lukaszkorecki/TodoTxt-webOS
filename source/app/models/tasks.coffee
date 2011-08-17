@@ -1,14 +1,27 @@
 class Tasks
   constructor : ->
-
     @file_parser = new FileParser()
     @html_gen = new TaskHtmlGenerator()
     @items = []
     @db = new Lawnchair( ->)
 
   load : (callback)->
-    @items = @db.all (data) ->
-      _data = data.map (item) -> @html_gen.getHtml item.task.content
+    @db.nuke()
+    [
+      "(A) 2011-03-05 Do more research about Barcelona +holiday"
+      "x 2011-03-12 2011-03-11 Clean up the fridge @chore"
+      "(C) 2011-03-26 Write the test code @home"
+      "x 2011-03-05 Move view code to Web Workers +mikrob"
+      "(D) 2011-03-06 2011-03-06 Make spaghetti @home +cooking"
+      "(B) 2011-03-06 2011-03-06 Make spaghetti @home +cooking"
+      "(E) 2011-03-06 2011-03-06 Make spaghetti @home +cooking"
+      "x 2011-03-18 2011-03-06 Check bus ticket expiration date @home +chore"
+      'take a look at me now'
+    ].forEach (el, index) => @add el
+
+    @db.all (data) =>
+      _data = data.map (item) => item.task.content
+      @items = _data
       callback _data
 
   getAll : (newContent) ->
@@ -30,9 +43,8 @@ class Tasks
     _item.content = @html_gen.getHtml(_item.content)
     @items.push(_item)
     @db.save { task : _item }, (e) =>
-      console.dir(e)
       @sortItems()
-      callback()
+      callback(_item) if callback
 
   update : (id, item, callbacks) ->
     @items[id] = item

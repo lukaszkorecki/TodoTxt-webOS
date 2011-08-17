@@ -4,36 +4,33 @@ class TasksAssistant
     @tasks = new Tasks()
 
   setup : ->
-    @addMenu()
     @setupNewTaskForm()
-
-    @tasks.load (data) =>
+    @addMenu()
+    @tasks.load (data)=>
       @data = data
-      @refreshTasks()
+      @addTaskList(data)
 
-    attributes = {
-      swipeToDelete: false,
-      reorderable: false,
-      itemTemplate: 'tasks/itemTemplate',
-      dividerFunction : @dividerFunction
-    }
 
-    @controller.setupWidget('tasksList', {
-      swipeToDelete: false,
-      reorderable: false,
-      itemTemplate: 'tasks/itemTemplate',
-      dividerFunction : @dividerFunction
-    }, @data)
+
+  addTaskList : (data) ->
+    @data = data.map (el) -> el.content
+    @taskListAttributes =
+      swipeToDelete: false
+      reorderable: false
+      itemTemplate: 'tasks/itemTemplate'
+      dividerFunction : TasksAssistant::dividerFunction
+
+    @controller.setupWidget('tasksList', @taskListAttributes, @data)
 
     Mojo.Event.listen( @controller.get('tasksList'), Mojo.Event.listTap, @taskDialog.bind(@))
 
   addMenu : ->
     # Menu setup
-    @attributes =
+    @menuAttributes =
       spacerHeight: 0
       menuClass: 'no-fade'
 
-    @model =
+    @menuModel =
       visible: true
       items : [
         {
@@ -48,17 +45,17 @@ class TasksAssistant
           command : 'refresh-tasks'
         }
       ]
-    @controller.setupWidget( Mojo.Menu.viewMenu, @attributes, @model )
+    @controller.setupWidget( Mojo.Menu.viewMenu, @menuAttributes, @menuModel )
 
   setupNewTaskForm : ->
-    @attributes = {
+    @formAttributes = {
       modelProperty: 'open',
       unstyled: true
     }
     @drawerState = { open: false }
     @controller.setupWidget("drawerId",@attributes, @drawerState)
 
-    @model = {
+    @formModel = {
       value : '',
       disabled : false
     }
@@ -68,15 +65,15 @@ class TasksAssistant
         enterSubmits: false,
         modelProperty : 'value',
         focus: true
-      }, @model)
+      }, @formModel)
 
     @controller.setupWidget("saveNewTask",  { }, { label : "Add todo", disabled: false })
-    Mojo.Event.listen(this.controller.get('saveNewTask'), Mojo.Event.tap, this.saveTask.bind(@))
+    Mojo.Event.listen(@controller.get('saveNewTask'), Mojo.Event.tap, @saveTask.bind(@))
 
   taskDialog : (event) ->
     message = event.item.raw_content
-    task_id = event.index;
-    fn = @handleTaskActions;
+    task_id = event.index
+    fn = @handleTaskActions
 
     @controller.showAlertDialog(
       onChoose: fn
@@ -141,14 +138,17 @@ class TasksAssistant
 
     @refreshTasks() if data != 'cancel'
 
-  refreshTasks : ->
-    Mojo.Log.info('refreshing tasks!')
-    @controller.get('tasksList').mojo.invalidateItems(0)
-    @controller.get('tasksList').mojo.noticeUpdatedItems(0, @tasks.sortItems().items)
+  refreshTasks : (cb)->
+    @tasks.load (data) =>
+      cb(data) if cb
+      Mojo.Log.info('refreshing tasks!')
+      @controller.get('tasksList').mojo.invalidateItems(0)
+      @controller.get('tasksList').mojo.noticeUpdatedItems(0, @tasks.sortItems().items)
+
 
   saveTask : (event) ->
     event.preventDefault()
-    @tasks.add this.model.value, =>
+    @tasks.add @model.value, =>
       @refreshTasks()
       @controller.get('taskContent').value = ""
       @toggleNewTaskForm()

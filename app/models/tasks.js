@@ -8,13 +8,18 @@ Tasks = (function() {
     this.db = new Lawnchair(function() {});
   }
   Tasks.prototype.load = function(callback) {
-    return this.items = this.db.all(function(data) {
+    this.db.nuke();
+    ["(A) 2011-03-05 Do more research about Barcelona +holiday", "x 2011-03-12 2011-03-11 Clean up the fridge @chore", "(C) 2011-03-26 Write the test code @home", "x 2011-03-05 Move view code to Web Workers +mikrob", "(D) 2011-03-06 2011-03-06 Make spaghetti @home +cooking", "(B) 2011-03-06 2011-03-06 Make spaghetti @home +cooking", "(E) 2011-03-06 2011-03-06 Make spaghetti @home +cooking", "x 2011-03-18 2011-03-06 Check bus ticket expiration date @home +chore", 'take a look at me now'].forEach(__bind(function(el, index) {
+      return this.add(el);
+    }, this));
+    return this.db.all(__bind(function(data) {
       var _data;
-      _data = data.map(function(item) {
-        return this.html_gen.getHtml(item.task.content);
-      });
+      _data = data.map(__bind(function(item) {
+        return item.task.content;
+      }, this));
+      this.items = _data;
       return callback(_data);
-    });
+    }, this));
   };
   Tasks.prototype.getAll = function(newContent) {
     var _data;
@@ -37,9 +42,10 @@ Tasks = (function() {
     return this.db.save({
       task: _item
     }, __bind(function(e) {
-      console.dir(e);
       this.sortItems();
-      return callback();
+      if (callback) {
+        return callback(_item);
+      }
     }, this));
   };
   Tasks.prototype.update = function(id, item, callbacks) {
